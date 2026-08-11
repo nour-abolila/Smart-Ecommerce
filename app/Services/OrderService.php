@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -54,6 +55,7 @@ class OrderService
             $order->items()->createMany($itemsData);
 
             $cart->items()->delete();
+            $order->user->notify(new OrderStatusNotification($order, $order->status));
 
             return $order->load('items.product');
         });
