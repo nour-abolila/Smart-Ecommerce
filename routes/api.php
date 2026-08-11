@@ -39,7 +39,7 @@ Route::post('/orders/{order}/pay', [\App\Http\Controllers\PaymentController::cla
 
 
 // Password Routes
- main
+
 Route::prefix('auth')->controller(PasswordController::class)->group(function () {
 
     Route::post('/forget-password', 'forgetPassword');
