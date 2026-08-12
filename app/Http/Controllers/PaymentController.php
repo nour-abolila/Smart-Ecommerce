@@ -3,28 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PaymentStatus;
-use App\Http\Requests\CheckoutRequest;
 use App\Http\Requests\PaymentRequest;
+use App\Http\Resources\PaymentResource;
 use App\Models\Order;
 use App\Models\Payment;
-use Illuminate\Http\Request;
 
+// Development-only fake gateway. Replace before production use.
 class PaymentController extends Controller
 {
     public function pay(PaymentRequest $request, Order $order)
     {
-        $payment = Payment::create([
-            'order_id' => $order->id,
-            'amount' => $request->validated('amount'),
-            'method' => $request->validated('method'),
-            'status' => PaymentStatus::Succeeded,
-            'transaction_id' => 'FAKE-' . strtoupper(uniqid()),
-            'currency' => 'usd',
-        ]);
+        $payment = new Payment;
+        $payment->order()->associate($order);
+        $payment->amount = $request->validated('amount');
+        $payment->method = $request->validated('method');
+        $payment->status = PaymentStatus::Succeeded;
+        $payment->transaction_id = 'FAKE-'.strtoupper(uniqid());
+        $payment->currency = 'usd';
+        $payment->save();
 
-        return response()->json([
-            'message' => 'Payment successful',
-            'payment' => $payment,
-        ]);
+        return success('Payment successful', new PaymentResource($payment), 201);
     }
 }

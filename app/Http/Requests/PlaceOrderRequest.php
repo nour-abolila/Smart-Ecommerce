@@ -15,7 +15,7 @@ class PlaceOrderRequest extends FormRequest
     {
         return [
             'delivery_address' => ['required', 'string'],
-            'payment_method' => ['required', 'string', 'max:100'],
+            'payment_method' => ['required', 'in:card,cash_on_delivery'],
         ];
     }
 }

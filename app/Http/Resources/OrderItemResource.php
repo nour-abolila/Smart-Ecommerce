@@ -12,8 +12,8 @@ class OrderItemResource extends JsonResource
         return [
             'id' => $this->id,
             'product_id' => $this->product_id,
-            'product_name' => $this->product?->name,
-            'product_image' => $this->product?->image,
+            'product_name' => $this->whenLoaded('product', fn () => $this->product?->name),
+            'product_image' => $this->whenLoaded('product', fn () => $this->product?->relationLoaded('images') ? $this->product->images->first()?->image_path : null),
             'quantity' => $this->quantity,
             'price' => $this->price,
             'subtotal' => $this->price * $this->quantity,

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OtpVerification extends Model
 {
@@ -11,10 +12,9 @@ class OtpVerification extends Model
         'otp_code',
         'expires_at',
         'verified_at',
-        'attemps',
-        'otp_last_sent_at'
+        'attempts',
+        'otp_last_sent_at',
     ];
-
 
     protected $casts = [
         'expires_at' => 'datetime',
@@ -22,8 +22,7 @@ class OtpVerification extends Model
         'otp_last_sent_at' => 'datetime',
     ];
 
-
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

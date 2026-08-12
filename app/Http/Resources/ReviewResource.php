@@ -17,7 +17,7 @@ class ReviewResource extends JsonResource
         // return parent::toArray($request);
         return [
             'id' => $this->id,
-            'user' => optional($this->user)->name ?? 'Anonymous',
+            'user' => $this->whenLoaded('user', fn () => trim("{$this->user->first_name} {$this->user->last_name}")),
             'rating' => $this->rating,
             'comment' => $this->comment,
             'created_at' => $this->created_at->toDateTimeString(),

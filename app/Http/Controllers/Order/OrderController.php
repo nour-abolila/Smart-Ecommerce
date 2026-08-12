@@ -18,25 +18,25 @@ class OrderController extends Controller
         $orders = Order::with('items.product')
             ->where('user_id', auth()->id())
             ->latest()
-            ->get();
+            ->paginate(20);
 
-        return response()->json(OrderResource::collection($orders));
+        return paginated($orders, 'Orders retrieved successfully.', OrderResource::class);
     }
 
     public function store(PlaceOrderRequest $request): JsonResponse
     {
         $order = $this->orderService->placeOrder(
-            auth()->id(),
+            auth()->user(),
             $request->validated()
         );
 
-        return response()->json(new OrderResource($order), 201);
+        return success('Order created successfully.', new OrderResource($order), 201);
     }
 
     public function show(Order $order): JsonResponse
     {
         abort_if($order->user_id !== auth()->id(), 403);
 
-        return response()->json(new OrderResource($order->load('items.product')));
+        return success('Order retrieved successfully.', new OrderResource($order->load('items.product')));
     }
 }

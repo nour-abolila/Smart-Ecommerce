@@ -22,18 +22,15 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $productId = $this->route('product')?->id;
+        $presence = $this->isMethod('post') ? 'required' : 'sometimes';
 
         return [
-            'brand' => ['required', 'string', 'max:255'],
-            'name' => ['required', 'string', 'max:255'],
+            'category_id' => [$presence, 'integer', 'exists:categories,id'],
+            'name' => [$presence, 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'original_price' => ['nullable', 'numeric', 'min:0', 'gte:price'],
-            'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
-            'reviews_count' => ['nullable', 'integer', 'min:0'],
-            'stock' => ['nullable', 'integer', 'min:0'],
+            'price' => [$presence, 'numeric', 'min:0'],
+            'discount_price' => ['nullable', 'numeric', 'min:0', 'lte:price'],
+            'stock' => ['sometimes', 'integer', 'min:0'],
         ];
     }
 }

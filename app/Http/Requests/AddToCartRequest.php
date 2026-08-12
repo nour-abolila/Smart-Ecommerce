@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Product;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,5 +27,15 @@ class AddToCartRequest extends FormRequest
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ];
+    }
+
+    public function after(): array
+    {
+        return [function ($validator) {
+            $product = Product::find($this->integer('product_id'));
+            if ($product && $this->integer('quantity') > $product->stock) {
+                $validator->errors()->add('quantity', 'The requested quantity exceeds available stock.');
+            }
+        }];
     }
 }

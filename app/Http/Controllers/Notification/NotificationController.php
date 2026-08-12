@@ -3,27 +3,20 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
-
 use App\Http\Resources\NotificationResource;
 use Illuminate\Http\JsonResponse;
-
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-
     public function index(Request $request): JsonResponse
     {
-        return response()->json(
-            NotificationResource::collection($request->user()->notifications)
-        );
+        return paginated($request->user()->notifications()->latest()->paginate(20), 'Notifications retrieved successfully.', NotificationResource::class);
     }
 
     public function unread(Request $request): JsonResponse
     {
-        return response()->json(
-            NotificationResource::collection($request->user()->unreadNotifications)
-        );
+        return paginated($request->user()->unreadNotifications()->latest()->paginate(20), 'Unread notifications retrieved successfully.', NotificationResource::class);
     }
 
     public function markAsRead(Request $request, string $id): JsonResponse
@@ -31,14 +24,14 @@ class NotificationController extends Controller
         $notification = $request->user()->notifications()->findOrFail($id);
         $notification->markAsRead();
 
-        return response()->json(new NotificationResource($notification));
+        return success('Notification marked as read.', new NotificationResource($notification));
     }
 
     public function markAllAsRead(Request $request): JsonResponse
     {
         $request->user()->unreadNotifications->markAsRead();
 
-        return response()->json(['message' => 'All notifications marked as read.']);
+        return success('All notifications marked as read.');
     }
 
     public function destroy(Request $request, string $id): JsonResponse
@@ -47,5 +40,4 @@ class NotificationController extends Controller
 
         return response()->json(null, 204);
     }
-
 }

@@ -12,7 +12,7 @@ class PaymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,15 +23,14 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'method' => ['required', 'in:card,cash_on_delivery'],
-        'amount' => ['required', 'numeric', 'min:0.01'],
+            'method' => ['required', 'in:card,cash_on_delivery'],
+            'amount' => ['required', 'numeric', 'min:0.01'],
 
-        'card_number' => ['required_if:method,card', 'digits:16'],
-        'expiry' => ['required_if:method,card', 'date_format:m/y'],
-        'cvv' => ['required_if:method,card', 'digits:3'],
-    ];
+            'card_number' => ['required_if:method,card', 'digits:16'],
+            'expiry' => ['required_if:method,card', 'date_format:m/y'],
+            'cvv' => ['required_if:method,card', 'digits:3'],
+        ];
     }
-
 
     public function messages(): array
     {

@@ -26,6 +26,17 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $admin = User::firstOrNew(
+            ['email' => 'admin@rivo.local'],
+        );
+        $admin->forceFill([
+            'first_name' => 'Rivo',
+            'last_name' => 'Admin',
+            'password' => Hash::make('password123'),
+            'phone_number' => '+10000000000',
+            'email_verified_at' => now(),
+            'role' => 'admin',
+        ])->save();
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,

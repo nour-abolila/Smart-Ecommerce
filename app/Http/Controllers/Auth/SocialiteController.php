@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Services\SocialAuthService;
-use Illuminate\Http\Request;
 
 class SocialiteController extends Controller
 {
@@ -12,16 +12,14 @@ class SocialiteController extends Controller
         private SocialAuthService $socialAuthService
     ) {}
 
-
     public function callback()
     {
         $user = $this->socialAuthService->callback();
 
         $token = $user->createToken('API Token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Login successful.',
-            'user' => $user,
+        return success('Login successful.', [
+            'user' => new UserResource($user),
             'token' => $token,
         ]);
     }

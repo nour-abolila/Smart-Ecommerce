@@ -9,11 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Order extends Model
 {
     protected $fillable = [
-        'user_id',
-        'status',
         'delivery_address',
         'payment_method',
-        'total_amount',
     ];
 
     protected $casts = [
@@ -28,5 +25,10 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }

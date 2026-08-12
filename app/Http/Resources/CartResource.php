@@ -16,9 +16,9 @@ class CartResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'Cart_id' => $this->id,
-            'Cart_total_price' => $this->total_price,
-            'products' => CartItemResource::collection($this->whenLoaded('items')), // connect with  Cart::with(['items.product']) 
+            'cart_id' => $this->id,
+            'cart_total_price' => $this->total_price,
+            'products' => CartItemResource::collection($this->whenLoaded('items')), // connect with  Cart::with(['items.product'])
         ];
     }
 }

@@ -3,16 +3,18 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 use App\Notifications\OrderStatusNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class OrderService
 {
-    public function placeOrder(int $userId, array $data): Order
+    public function placeOrder(User $user, array $data): Order
     {
-        return DB::transaction(function () use ($userId, $data) {
-            $cart = auth()->user()->cart()->with('items.product')->first();
+        return DB::transaction(function () use ($user, $data) {
+            $cart = $user->cart()->with('items')->first();
 
             if (! $cart || $cart->items->isEmpty()) {
                 throw ValidationException::withMessages([
@@ -23,8 +25,15 @@ class OrderService
             $totalAmount = 0;
             $itemsData = [];
 
+            $products = Product::query()
+                ->whereIn('id', $cart->items->pluck('product_id')->sort()->values())
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
             foreach ($cart->items as $cartItem) {
-                $product = $cartItem->product;
+                $product = $products->get($cartItem->product_id);
 
                 if (! $product || $product->stock < $cartItem->quantity) {
                     throw ValidationException::withMessages([
@@ -44,18 +53,19 @@ class OrderService
                 $product->decrement('stock', $cartItem->quantity);
             }
 
-            $order = Order::create([
-                'user_id' => $userId,
-                'status' => 'completed',
+            $order = new Order([
                 'delivery_address' => $data['delivery_address'],
                 'payment_method' => $data['payment_method'],
-                'total_amount' => $totalAmount,
             ]);
+            $order->user()->associate($user);
+            $order->status = 'completed';
+            $order->total_amount = $totalAmount;
+            $order->save();
 
             $order->items()->createMany($itemsData);
 
             $cart->items()->delete();
-            $order->user->notify(new OrderStatusNotification($order, $order->status));
+            $user->notify(new OrderStatusNotification($order, $order->status));
 
             return $order->load('items.product');
         });

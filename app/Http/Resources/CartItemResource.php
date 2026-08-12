@@ -16,15 +16,15 @@ class CartItemResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'Cart_item_id' => $this->id,
+            'cart_item_id' => $this->id,
             'product_info' => [
-                'id' => $this->product->id,
-                'name' => $this->product->name,
-                'price' => $this->product->price,
-                'image' => $this->product->image,
+                'id' => $this->whenLoaded('product', fn () => $this->product->id),
+                'name' => $this->whenLoaded('product', fn () => $this->product->name),
+                'price' => $this->whenLoaded('product', fn () => $this->product->price),
+                'image' => $this->whenLoaded('product', fn () => $this->product->relationLoaded('images') ? $this->product->images->first()?->image_path : null),
             ],
             'quantity' => $this->quantity,
-            'subtotal' => $this->product->price * $this->quantity,
+            'subtotal' => $this->whenLoaded('product', fn () => $this->product->price * $this->quantity),
         ];
     }
 }

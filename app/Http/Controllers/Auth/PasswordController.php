@@ -8,7 +8,6 @@ use App\Http\Requests\Password\ResetPasswordRequest;
 use App\Http\Requests\Password\VerifyPasswordRequest;
 use App\Models\User;
 use App\Services\OtpService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class PasswordController extends Controller
@@ -19,8 +18,6 @@ class PasswordController extends Controller
     {
         return User::firstWhere('email', $email);
     }
-
-
 
     public function forgetPassword(ForgetPasswordRequest $request)
     {
@@ -35,22 +32,18 @@ class PasswordController extends Controller
         return success('OTP sent to your email', ['user_id' => $user->id]);
     }
 
-
-
     public function verifyPassword(VerifyPasswordRequest $request)
     {
         $data = $request->validated();
 
         $user = $this->getUserByEmail($data['email']);
 
-        if (!$this->otpService->verifyOtp($user, $request->input('otp_code'))) {
-            return error('Invalid or expired OTP', 422);
+        if (! $this->otpService->verifyOtp($user, $request->input('otp_code'))) {
+            return error('Invalid or expired OTP', 422, null);
         }
 
         return success('OTP verified successfully. You can now reset your password.');
     }
-
-
 
     public function resetPassword(ResetPasswordRequest $request)
     {
@@ -65,8 +58,6 @@ class PasswordController extends Controller
         return success('Password has been reset successfully.');
     }
 
-
-
     public function resendOtp(ForgetPasswordRequest $request)
     {
         $data = $request->validated();
@@ -74,10 +65,11 @@ class PasswordController extends Controller
         $user = $this->getUserByEmail($data['email']);
 
         $otp = $this->otpService->generateOtp($user);
-        if (!$otp) {
+        if (! $otp) {
             return error(
                 'Please wait 2 minutes before requesting another OTP',
-                429
+                429,
+                null
             );
         }
 

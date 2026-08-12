@@ -15,7 +15,8 @@ class OrderSeeder extends Seeder
 
         if (! $user) {
             $user = User::factory()->create([
-                'name' => 'Test User',
+                'first_name' => 'Test',
+                'last_name' => 'User',
                 'email' => 'testuser@example.com',
                 'password' => bcrypt('password'),
             ]);
@@ -25,6 +26,7 @@ class OrderSeeder extends Seeder
 
         if ($products->isEmpty()) {
             $this->command->warn('No products found — seed products first.');
+
             return;
         }
 
@@ -63,6 +65,6 @@ class OrderSeeder extends Seeder
             $order->items()->createMany($itemsData);
         }
 
-        $this->command->info('Seeded 3 sample orders for user: ' . $user->email);
+        $this->command->info('Seeded 3 sample orders for user: '.$user->email);
     }
 }
