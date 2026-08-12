@@ -1,0 +1,53 @@
+
+import {Product} from "./products"
+
+export const Chiccos : Product[] = [
+  {
+    id: 1,
+    title: "Chicco Baby Bottle Natural Feeling Pink 150ml 0m+",
+    brand: "CHICCO",
+    image: "/products/chicco-bottle-pink.png",
+    price: 299,
+    oldPrice: 349,
+    stock: 15,
+    rating: 5,
+    reviewCount: 2149,
+    isFavorite: false,
+  },
+  {
+    id: 2,
+    title: "Chicco Baby Bottle Natural Feeling Blue 150ml 0m+",
+    brand: "CHICCO",
+    image: "/products/chicco-bottle-blue.png",
+    price: 299,
+    oldPrice: 349,
+    stock: 20,
+    rating: 5,
+    reviewCount: 1580,
+    isFavorite: false,
+  },
+  {
+    id: 3,
+    title: "Chicco Teat Physio anti-colica accettata da 6 bambini su 10",
+    brand: "CHICCO",
+    image: "/products/chicco-teat.png",
+    price: 100,
+    oldPrice: 149,
+    stock: 30,
+    rating: 4,
+    reviewCount: 900,
+    isFavorite: false,
+  },
+  {
+    id: 4,
+    title: "Chicco Physio Air Soothers 0-6 months silicone",
+    brand: "CHICCO",
+    image: "/products/chicco-soother.png",
+    price: 2400,
+    oldPrice: 3200,
+    stock: 10,
+    rating: 4,
+    reviewCount: 1046,
+    isFavorite: false,
+  },
+];

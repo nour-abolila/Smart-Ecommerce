@@ -10,17 +10,41 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Sunglasses',
-            'Baby Care',
-            'Electronics',
-            'Home & Living',
-            'Beauty',
-            'Sports',
-            'Books',
+            [
+                'name' => 'Electronics',
+                'image' => null,
+            ],
+            [
+                'name' => 'Home & Living',
+                'image' => null,
+            ],
+            [
+                'name' => 'Beauty',
+                'image' => null,
+            ],
+            [
+                'name' => 'Sports',
+                'image' => null,
+            ],
+            [
+                'name' => 'Books',
+                'image' => null,
+            ],
+            [
+                'name' => 'Sunglasses',
+                'image' => null,
+            ],
+            [
+                'name' => 'Baby Care',
+                'image' => null,
+            ],
         ];
 
-        foreach ($categories as $name) {
-            Category::updateOrCreate(['name' => $name]);
+        foreach ($categories as $category) {
+            Category::updateOrCreate(
+                ['name' => $category['name']],
+                $category
+            );
         }
     }
 }

@@ -35,7 +35,11 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::get('/google/callback', [SocialiteController::class, 'callback']);
 });
 
+Route::post('/orders/{order}/pay', [\App\Http\Controllers\PaymentController::class, 'pay']);
+
+
 // Password Routes
+
 Route::prefix('auth')->controller(PasswordController::class)->group(function () {
 
     Route::post('/forget-password', 'forgetPassword');
@@ -47,45 +51,29 @@ Route::prefix('auth')->controller(PasswordController::class)->group(function () 
     Route::post('/resend-otp', 'resendOtp');
 });
 
+Route::middleware('auth:api')->prefix('notifications')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Notification\NotificationController::class, 'index']);
+    Route::get('/unread', [\App\Http\Controllers\Notification\NotificationController::class, 'unread']);
+    Route::patch('/{id}/read', [\App\Http\Controllers\Notification\NotificationController::class, 'markAsRead']);
+    Route::patch('/read-all', [\App\Http\Controllers\Notification\NotificationController::class, 'markAllAsRead']);
+    Route::delete('/{id}', [\App\Http\Controllers\Notification\NotificationController::class, 'destroy']);
+});
 // Payment
 Route::post('/orders/{order}/checkout', [PaymentController::class, 'pay']);
 
-// Notifications
-Route::middleware('auth:sanctum')
-    ->prefix('notifications')
-    ->group(function () {
 
-        Route::get('/', [
-            \App\Http\Controllers\Notification\NotificationController::class,
-            'index'
-        ]);
 
-        Route::get('/unread', [
-            \App\Http\Controllers\Notification\NotificationController::class,
-            'unread'
-        ]);
 
-        Route::patch('/{id}/read', [
-            \App\Http\Controllers\Notification\NotificationController::class,
-            'markAsRead'
-        ]);
 
-        Route::patch('/read-all', [
-            \App\Http\Controllers\Notification\NotificationController::class,
-            'markAllAsRead'
-        ]);
+Route::middleware('auth:api')->prefix('orders')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Order\OrderController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\Order\OrderController::class, 'store']);
+    Route::get('/{order}', [\App\Http\Controllers\Order\OrderController::class, 'show']);
+});
 
-        Route::delete('/{id}', [
-            \App\Http\Controllers\Notification\NotificationController::class,
-            'destroy'
-        ]);
-    });
 
-// Admin Products
-Route::apiResource(
-    'products',
-    \App\Http\Controllers\Admin\ProductController::class
-);
+Route::apiResource('products', \App\Http\Controllers\Admin\ProductController::class);
+Route::apiResource('categories', \App\Http\Controllers\CategoryController::class);
 
 // Cart Routes
 Route::middleware('auth:api')
